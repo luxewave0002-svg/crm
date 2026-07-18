@@ -4,6 +4,8 @@ import { navigate } from '../App.jsx'
 import ChannelEntry from './ChannelEntry.jsx'
 import ServiceTimeline from './ServiceTimeline.jsx'
 
+const today = () => new Date().toISOString().slice(0, 10)
+
 function yen(n) { return '¥' + Number(n || 0).toLocaleString() }
 function statusLabel(s) {
   if (s === 'paid') return '入金済み'
@@ -104,7 +106,10 @@ export default function CustomerView({ id, showFlash }) {
     const list = [
       ...(on.data || []).map((r) => ({
         channel: 'online', id: r.id, date: r.purchase_date,
-        title: r.service_name, sub: r.plan || '', note: r.note || '',
+        title: r.service_name,
+        sub: [r.plan, r.test_end_date ? `テスト終了予定 ${r.test_end_date}` : null].filter(Boolean).join(' / '),
+        note: r.note || '',
+        expired: !!(r.test_end_date && r.test_end_date < today()),
         created_at: r.created_at,
       })),
       ...(re.data || []).map((r) => ({

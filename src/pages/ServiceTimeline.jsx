@@ -66,6 +66,7 @@ export default function ServiceTimeline({ events, onChanged, showFlash }) {
                 <span className={`badge ch-${ev.channel}`}>{CH_LABEL[ev.channel]}</span>
                 <strong>{ev.title}</strong>
                 {ev.sub && <span className="small muted">{ev.sub}</span>}
+                {ev.expired && <span className="badge cust-unpaid">期限切れ</span>}
                 <button className="btn danger sm del" onClick={() => onDelete(ev)}>削除</button>
               </div>
               {ev.note && <div className="tl-note">{ev.note}</div>}

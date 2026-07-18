@@ -33,3 +33,28 @@ export const CHANNELS = {
     options: ['光治療'],
   },
 }
+
+// LUXE WAVE のプラン階層(フリープラン + Level.2〜5、各テスト版あり)
+export const LUXE_WAVE_PLANS = [
+  'フリープラン',
+  'Level.2_test', 'Level.2',
+  'Level.3_test', 'Level.3',
+  'Level.4_test', 'Level.4',
+  'Level.5_test', 'Level.5',
+]
+export const isTestPlan = (plan) => typeof plan === 'string' && plan.endsWith('_test')
+
+// テスト期間の選択肢(日数はtest_end_date算出用)
+export const TEST_PERIODS = [
+  { value: '2w', label: '2週間', days: 14 },
+  { value: '1m', label: '1ヶ月', days: 30 },
+  { value: '1.5m', label: '1.5ヶ月', days: 45 },
+  { value: '2m', label: '2ヶ月', days: 60 },
+]
+export function calcTestEndDate(startDateStr, periodValue) {
+  const p = TEST_PERIODS.find((t) => t.value === periodValue)
+  if (!p || !startDateStr) return null
+  const d = new Date(startDateStr + 'T00:00:00')
+  d.setDate(d.getDate() + p.days)
+  return d.toISOString().slice(0, 10)
+}
