@@ -1,11 +1,11 @@
 import React, { useState } from 'react'
-import { supabase, CHANNELS, LUXE_WAVE_PLANS, isTestPlan, TEST_PERIODS, calcTestEndDate } from '../supabaseClient'
+import { supabase, CHANNELS, LUXE_WAVE_PLANS, TEST_PERIODS, calcTestEndDate, onlineNeedsTestPeriod, retailNeedsTestPeriod } from '../supabaseClient'
 
 const today = () => new Date().toISOString().slice(0, 10)
 
 const emptyForms = () => ({
   online: { service_name: CHANNELS.online.options[0], plan: '', test_period: TEST_PERIODS[0].value, purchase_date: today(), note: '' },
-  retail: { product_name: CHANNELS.retail.options[0], quantity: 1, purchase_date: today(), note: '' },
+  retail: { product_name: CHANNELS.retail.options[0], quantity: 1, test_period: TEST_PERIODS[0].value, purchase_date: today(), note: '' },
   offline: { visit_type: CHANNELS.offline.options[0], visit_date: today(), notes: '' },
 })
 
@@ -26,7 +26,7 @@ export default function ChannelEntry({ customerId, onSaved, showFlash }) {
     const f = forms[tab]
     let payload
     if (tab === 'online') {
-      const testing = f.service_name === 'LUXE WAVE' && isTestPlan(f.plan)
+      const testing = onlineNeedsTestPeriod(f.service_name, f.plan)
       payload = {
         customer_id: customerId,
         service_name: f.service_name,
@@ -37,12 +37,15 @@ export default function ChannelEntry({ customerId, onSaved, showFlash }) {
         test_end_date: testing ? calcTestEndDate(f.purchase_date || today(), f.test_period) : null,
       }
     } else if (tab === 'retail') {
+      const testing = retailNeedsTestPeriod(f.product_name)
       payload = {
         customer_id: customerId,
         product_name: f.product_name,
         quantity: Math.max(1, Number(f.quantity) || 1),
         purchase_date: f.purchase_date || today(),
         note: f.note.trim() || null,
+        test_period: testing ? f.test_period : null,
+        test_end_date: testing ? calcTestEndDate(f.purchase_date || today(), f.test_period) : null,
       }
     } else {
       payload = {
@@ -118,7 +121,7 @@ export default function ChannelEntry({ customerId, onSaved, showFlash }) {
               </div>
             </div>
 
-            {forms.online.service_name === 'LUXE WAVE' && isTestPlan(forms.online.plan) && (
+            {onlineNeedsTestPeriod(forms.online.service_name, forms.online.plan) && (
               <div className="grid2">
                 <div className="field">
                   <label>テスト期間</label>
@@ -187,6 +190,25 @@ export default function ChannelEntry({ customerId, onSaved, showFlash }) {
                 />
               </div>
             </div>
+
+            {retailNeedsTestPeriod(forms.retail.product_name) && (
+              <div className="grid2">
+                <div className="field">
+                  <label>テスト期間</label>
+                  <select
+                    value={forms.retail.test_period}
+                    onChange={(e) => setField('retail', 'test_period', e.target.value)}
+                  >
+                    {TEST_PERIODS.map((p) => <option key={p.value} value={p.value}>{p.label}</option>)}
+                  </select>
+                </div>
+                <div className="field">
+                  <label>テスト終了予定日</label>
+                  <input type="text" value={calcTestEndDate(forms.retail.purchase_date, forms.retail.test_period) || '—'} disabled />
+                </div>
+              </div>
+            )}
+
             <div className="field">
               <label>備考</label>
               <input

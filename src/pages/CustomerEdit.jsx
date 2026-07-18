@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { supabase, MAX_LOCATIONS, MAX_PHOTOS, PHOTO_BUCKET, CHANNELS, LUXE_WAVE_PLANS, isTestPlan, TEST_PERIODS, calcTestEndDate } from '../supabaseClient'
+import { supabase, MAX_LOCATIONS, MAX_PHOTOS, PHOTO_BUCKET, CHANNELS, LUXE_WAVE_PLANS, TEST_PERIODS, calcTestEndDate, onlineNeedsTestPeriod, retailNeedsTestPeriod } from '../supabaseClient'
 import { navigate } from '../App.jsx'
 
 const emptyLoc = () => ({ label: '', address: '', note: '' })
@@ -7,7 +7,7 @@ const today = () => new Date().toISOString().slice(0, 10)
 
 const emptyRow = (ch) => {
   if (ch === 'online') return { service_name: CHANNELS.online.options[0], plan: '', test_period: TEST_PERIODS[0].value, purchase_date: today(), note: '' }
-  if (ch === 'retail') return { product_name: CHANNELS.retail.options[0], quantity: 1, purchase_date: today(), note: '' }
+  if (ch === 'retail') return { product_name: CHANNELS.retail.options[0], quantity: 1, test_period: TEST_PERIODS[0].value, purchase_date: today(), note: '' }
   return { visit_type: CHANNELS.offline.options[0], visit_date: today(), notes: '' }
 }
 
@@ -171,7 +171,7 @@ export default function CustomerEdit({ id, showFlash }) {
         if (!rows2 || !rows2.length) continue
         const payloads = rows2.map((f) => {
           if (ch === 'online') {
-            const testing = f.service_name === 'LUXE WAVE' && isTestPlan(f.plan)
+            const testing = onlineNeedsTestPeriod(f.service_name, f.plan)
             return {
               customer_id: custId,
               service_name: f.service_name,
@@ -182,12 +182,15 @@ export default function CustomerEdit({ id, showFlash }) {
               test_end_date: testing ? calcTestEndDate(f.purchase_date || today(), f.test_period) : null,
             }
           } else if (ch === 'retail') {
+            const testing = retailNeedsTestPeriod(f.product_name)
             return {
               customer_id: custId,
               product_name: f.product_name,
               quantity: Math.max(1, Number(f.quantity) || 1),
               purchase_date: f.purchase_date || today(),
               note: f.note.trim() || null,
+              test_period: testing ? f.test_period : null,
+              test_end_date: testing ? calcTestEndDate(f.purchase_date || today(), f.test_period) : null,
             }
           }
           return {
@@ -299,12 +302,21 @@ export default function CustomerEdit({ id, showFlash }) {
             </div>
             <div className="field">
               <label>状態</label>
-              <select value={form.status} onChange={(e) => setField('status', e.target.value)}>
+              <select
+                value={form.status}
+                onChange={(e) => setField('status', e.target.value)}
+                disabled={!id && !chanEnable.online && !chanEnable.offline}
+              >
                 <option value="active">稼働中</option>
                 <option value="inactive">停止</option>
                 <option value="pending">保留</option>
                 <option value="unpaid">未入金</option>
               </select>
+              {!id && !chanEnable.online && !chanEnable.offline && (
+                <p className="small muted" style={{ marginTop: 4 }}>
+                  下の「オンラインサービス」または「オフラインサービス」にチェックを入れると選択できます(小売のみの場合は対象外です)。
+                </p>
+              )}
             </div>
           </div>
         </div>
@@ -373,7 +385,7 @@ export default function CustomerEdit({ id, showFlash }) {
                       </div>
                     </div>
 
-                    {f.service_name === 'LUXE WAVE' && isTestPlan(f.plan) && (
+                    {onlineNeedsTestPeriod(f.service_name, f.plan) && (
                       <div className="grid2">
                         <div className="field">
                           <label>テスト期間</label>
@@ -455,6 +467,22 @@ export default function CustomerEdit({ id, showFlash }) {
                         <input disabled={!chanEnable.retail} type="date" value={f.purchase_date} onChange={(e) => setChanRowField('retail', idx, 'purchase_date', e.target.value)} />
                       </div>
                     </div>
+
+                    {retailNeedsTestPeriod(f.product_name) && (
+                      <div className="grid2">
+                        <div className="field">
+                          <label>テスト期間</label>
+                          <select disabled={!chanEnable.retail} value={f.test_period} onChange={(e) => setChanRowField('retail', idx, 'test_period', e.target.value)}>
+                            {TEST_PERIODS.map((p) => <option key={p.value} value={p.value}>{p.label}</option>)}
+                          </select>
+                        </div>
+                        <div className="field">
+                          <label>テスト終了予定日</label>
+                          <input type="text" value={calcTestEndDate(f.purchase_date, f.test_period) || '—'} disabled />
+                        </div>
+                      </div>
+                    )}
+
                     <div className="field">
                       <label>備考</label>
                       <input disabled={!chanEnable.retail} type="text" value={f.note} onChange={(e) => setChanRowField('retail', idx, 'note', e.target.value)} />

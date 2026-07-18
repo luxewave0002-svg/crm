@@ -58,3 +58,16 @@ export function calcTestEndDate(startDateStr, periodValue) {
   d.setDate(d.getDate() + p.days)
   return d.toISOString().slice(0, 10)
 }
+
+// テスト期間の入力欄を出すかどうかの判定
+// オンライン: LUXE WAVEの_testプラン、またはブレーカー(常に)
+// 小売: ネックレス・スマートプラグ
+export const RETAIL_TEST_PRODUCTS = ['ネックレス', 'スマートプラグ']
+export function onlineNeedsTestPeriod(serviceName, plan) {
+  if (serviceName === 'ブレーカー') return true
+  if (serviceName === 'LUXE WAVE' && isTestPlan(plan)) return true
+  return false
+}
+export function retailNeedsTestPeriod(productName) {
+  return RETAIL_TEST_PRODUCTS.includes(productName)
+}
