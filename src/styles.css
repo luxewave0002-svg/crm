@@ -1,0 +1,199 @@
+:root{
+  --bg:#0f1115;
+  --panel:#181b22;
+  --panel2:#1f232c;
+  --line:#2b303b;
+  --text:#e7e9ee;
+  --muted:#9aa2b1;
+  --accent:#5b8cff;
+  --accent2:#3ad1b5;
+  --danger:#ff6b6b;
+  --ok:#3ad17f;
+  --warn:#ffcc66;
+  --orange:#ff9f5b;
+  --radius:12px;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:-apple-system,BlinkMacSystemFont,"Hiragino Kaku Gothic ProN","Noto Sans JP","Segoe UI",sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  line-height:1.6;
+  font-size:15px;
+}
+a{color:var(--accent);text-decoration:none;cursor:pointer}
+a:hover{text-decoration:underline}
+button{font-family:inherit}
+
+.topbar{
+  display:flex;align-items:center;gap:20px;
+  padding:12px 20px;background:var(--panel);
+  border-bottom:1px solid var(--line);flex-wrap:wrap;
+}
+.brand{font-weight:700;font-size:18px;color:var(--text);cursor:pointer}
+.brand span{color:var(--accent2);font-weight:500;font-size:14px;margin-left:4px}
+.topbar nav{display:flex;gap:16px;flex:1}
+.topbar nav a{color:var(--muted);font-size:14px}
+.topbar nav a:hover{color:var(--text);text-decoration:none}
+.me{display:flex;align-items:center;gap:12px;font-size:13px;color:var(--muted)}
+.logout{color:var(--danger);cursor:pointer}
+
+.wrap{max-width:1080px;margin:0 auto;padding:24px 20px 60px}
+.foot{text-align:center;color:var(--muted);font-size:12px;padding:24px}
+
+h1{font-size:22px;margin:0 0 4px}
+h2{font-size:17px;margin:28px 0 12px;padding-bottom:6px;border-bottom:1px solid var(--line)}
+.sub{color:var(--muted);font-size:13px;margin:0 0 20px}
+
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:20px;margin-bottom:20px}
+
+.flash{background:rgba(58,209,127,.12);border:1px solid var(--ok);color:#bff4d3;padding:10px 14px;border-radius:8px;margin-bottom:20px;font-size:14px}
+.err{background:rgba(255,107,107,.12);border:1px solid var(--danger);color:#ffc9c9;padding:10px 14px;border-radius:8px;margin-bottom:16px;font-size:14px}
+
+.field{margin-bottom:14px}
+.field label{display:block;font-size:13px;color:var(--muted);margin-bottom:5px}
+input[type=text],input[type=email],input[type=tel],input[type=number],
+input[type=date],input[type=datetime-local],input[type=password],select,textarea{
+  width:100%;padding:9px 11px;background:var(--panel2);border:1px solid var(--line);
+  border-radius:8px;color:var(--text);font-size:14px;font-family:inherit;
+}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent)}
+textarea{resize:vertical;min-height:80px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}
+
+.btn{display:inline-block;padding:9px 18px;border-radius:8px;border:1px solid var(--line);
+  background:var(--panel2);color:var(--text);font-size:14px;cursor:pointer;font-family:inherit}
+.btn:hover{text-decoration:none;border-color:var(--accent)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:600}
+.btn.primary:hover{filter:brightness(1.1)}
+.btn.ghost{background:transparent}
+.btn.danger{color:var(--danger);border-color:rgba(255,107,107,.4)}
+.btn.danger:hover{background:rgba(255,107,107,.12)}
+.btn.sm{padding:5px 12px;font-size:12px}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line)}
+th{color:var(--muted);font-weight:600;font-size:12px;letter-spacing:.03em}
+tr:hover td{background:var(--panel2)}
+.right{text-align:right}
+.center{text-align:center}
+
+.badge{display:inline-block;padding:2px 9px;border-radius:99px;font-size:12px;font-weight:600}
+.badge.paid{background:rgba(58,209,127,.15);color:var(--ok)}
+.badge.partial{background:rgba(255,204,102,.15);color:var(--warn)}
+.badge.unpaid{background:rgba(255,107,107,.15);color:var(--danger)}
+
+.badge.cust-active{background:rgba(58,209,127,.15);color:var(--ok)}
+.badge.cust-inactive{background:rgba(154,162,177,.15);color:var(--muted)}
+.badge.cust-pending{background:rgba(255,204,102,.15);color:var(--warn)}
+.badge.cust-unpaid{background:rgba(255,107,107,.15);color:var(--danger)}
+
+/* チャネル配色: 1.オンライン=青 / 2.小売=緑 / 3.オフライン=橙 */
+.badge.ch-online{background:rgba(91,140,255,.15);color:var(--accent)}
+.badge.ch-retail{background:rgba(58,209,127,.15);color:var(--ok)}
+.badge.ch-offline{background:rgba(255,159,91,.15);color:var(--orange)}
+
+/* 一元カルテ タイムライン */
+.timeline{position:relative;margin-top:4px}
+.timeline::before{
+  content:'';position:absolute;left:7px;top:6px;bottom:6px;
+  width:2px;background:var(--line);
+}
+.tl-item{position:relative;padding:0 0 18px 28px}
+.tl-item:last-child{padding-bottom:0}
+.tl-dot{
+  position:absolute;left:0;top:6px;width:16px;height:16px;border-radius:50%;
+  border:3px solid var(--panel);background:var(--muted);
+}
+.tl-dot.ch-online{background:var(--accent)}
+.tl-dot.ch-retail{background:var(--ok)}
+.tl-dot.ch-offline{background:var(--orange)}
+.tl-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.tl-date{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+.tl-body{margin-top:2px}
+.tl-note{font-size:12px;color:var(--muted);white-space:pre-wrap;margin-top:2px}
+.tl-item .del{margin-left:auto}
+
+/* チャネル入力タブ */
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.tab{
+  padding:7px 16px;border-radius:99px;border:1px solid var(--line);
+  background:var(--panel2);color:var(--muted);font-size:13px;cursor:pointer;font-family:inherit;
+}
+.tab:hover{color:var(--text)}
+.tab.on-online.active{background:rgba(91,140,255,.15);border-color:var(--accent);color:var(--accent);font-weight:600}
+.tab.on-retail.active{background:rgba(58,209,127,.15);border-color:var(--ok);color:var(--ok);font-weight:600}
+.tab.on-offline.active{background:rgba(255,159,91,.15);border-color:var(--orange);color:var(--orange);font-weight:600}
+
+.photos{display:flex;flex-wrap:wrap;gap:12px}
+.photo{position:relative;width:140px}
+.photo img{width:140px;height:140px;object-fit:cover;border-radius:10px;border:1px solid var(--line);display:block;background:var(--panel2)}
+.photo .del{position:absolute;top:6px;right:6px}
+
+.muted{color:var(--muted)}
+.small{font-size:12px}
+.spacer{height:8px}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.pill{display:inline-block;background:var(--panel2);border:1px solid var(--line);border-radius:99px;padding:3px 10px;font-size:12px;color:var(--muted)}
+
+.login-box{max-width:360px;margin:80px auto;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:32px}
+.login-box h1{text-align:center;margin-bottom:24px}
+
+.center-page{text-align:center;padding:80px 20px;color:var(--muted)}
+
+.chan-row{padding:10px 0}
+.chan-row-off{opacity:.45}
+.chan-row-sep{height:1px;background:var(--line);margin:14px 0}
+
+/* ===== モバイル対応 ===== */
+@media(max-width:640px){
+  html{-webkit-text-size-adjust:100%}
+  body{font-size:14px}
+  .wrap{padding:14px 12px 40px}
+
+  .topbar{
+    flex-wrap:wrap;gap:10px;padding:10px 14px;
+  }
+  .topbar nav{order:3;flex-basis:100%;gap:14px;font-size:13px}
+  .me{margin-left:auto;font-size:12px;gap:8px}
+  .me span{display:none} /* メールアドレスは省略しログアウトのみ表示 */
+
+  h1{font-size:19px}
+  h2{font-size:15px;margin:20px 0 10px}
+  .sub{font-size:12px}
+
+  .panel{padding:14px;border-radius:10px;margin-bottom:14px}
+
+  .grid2,.grid3{grid-template-columns:1fr;gap:10px}
+  .row{flex-direction:column;align-items:stretch}
+  .row > *{width:100% !important}
+
+  input[type=text],input[type=email],input[type=tel],input[type=number],
+  input[type=date],input[type=datetime-local],input[type=password],select,textarea{
+    font-size:16px; /* iOS拡大防止 */
+    padding:10px 12px;
+  }
+
+  .btn{width:100%;text-align:center;padding:11px 14px}
+  .btn.sm{width:auto;padding:8px 14px}
+  .actions{flex-direction:column}
+  .actions .btn,.actions a.btn{width:100%}
+
+  /* 幅の広い表は横スクロールで対応 */
+  .panel > table,.panel table{display:block;overflow-x:auto;-webkit-overflow-scrolling:touch;white-space:nowrap}
+  table th,table td{padding:8px 10px;font-size:13px}
+
+  .tabs{gap:6px;overflow-x:auto;flex-wrap:nowrap;-webkit-overflow-scrolling:touch;padding-bottom:2px}
+  .tab{white-space:nowrap;flex:none}
+
+  .photos{gap:8px}
+  .photo,.photo img{width:104px;height:104px}
+
+  .login-box{margin:40px auto;padding:22px;max-width:100%}
+
+  .chan-row .grid2,.chan-row .grid3{gap:10px}
+}
