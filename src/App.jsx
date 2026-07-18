@@ -83,8 +83,8 @@ export default function App() {
           Luxe Wave <span>顧客管理</span>
         </a>
         <nav>
-          <a onClick={() => navigate('/')}>顧客一覧</a>
-          <a onClick={() => navigate('/customer/new')}>新規登録</a>
+          <a className="nav-btn" onClick={() => navigate('/')}>📋 顧客一覧</a>
+          <a className="nav-btn nav-btn-primary" onClick={() => navigate('/customer/new')}>＋ 新規登録</a>
         </nav>
         <div className="me">
           <span>{staffEmail}</span>

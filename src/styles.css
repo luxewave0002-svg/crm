@@ -158,7 +158,13 @@ tr:hover td{background:var(--panel2)}
   .topbar{
     flex-wrap:wrap;gap:10px;padding:10px 14px;
   }
-  .topbar nav{order:3;flex-basis:100%;gap:14px;font-size:13px}
+  .topbar nav{order:3;flex-basis:100%;gap:8px;font-size:13px;display:flex}
+  .topbar nav a.nav-btn{
+    flex:1;text-align:center;padding:10px 12px;border-radius:8px;
+    background:var(--panel2);border:1px solid var(--line);color:var(--text);
+    font-weight:600;font-size:13px;
+  }
+  .topbar nav a.nav-btn-primary{background:var(--accent);border-color:var(--accent);color:#fff}
   .me{margin-left:auto;font-size:12px;gap:8px}
   .me span{display:none} /* メールアドレスは省略しログアウトのみ表示 */
 
