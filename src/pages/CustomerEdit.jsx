@@ -348,7 +348,7 @@ export default function CustomerEdit({ id, showFlash }) {
 
         {!id && (
           <div className="panel">
-            <h2 style={{ marginTop: 0, border: 'none' }}>初回サービス記録: オンライン・小売・オフライン（任意）</h2>
+            <h2 style={{ marginTop: 0, border: 'none' }}>サービス記録: オンライン・小売・オフライン</h2>
             <p className="small muted">登録と同時に3チャネルの履歴も記録できます。使うチャネルにチェックを入れてから入力してください（チェックなしの内容は保存されません）。</p>
 
             <div style={{ marginBottom: 14 }}>
