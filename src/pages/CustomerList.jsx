@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { supabase } from '../supabaseClient'
+import { supabase, custStatusLabel, custStatusClass } from '../supabaseClient'
 import { navigate } from '../App.jsx'
 
 function yen(n) {
@@ -9,19 +9,6 @@ function statusLabel(s) {
   if (s === 'paid') return '入金済み'
   if (s === 'partial') return '一部入金'
   return '未入金'
-}
-function custStatusLabel(s) {
-  if (s === 'active') return '稼働中'
-  if (s === 'inactive') return '停止'
-  if (s === 'pending') return '保留'
-  if (s === 'unpaid') return '未入金'
-  return s
-}
-function custStatusClass(s) {
-  if (s === 'active') return 'cust-active'
-  if (s === 'unpaid') return 'cust-unpaid'
-  if (s === 'pending') return 'cust-pending'
-  return 'cust-inactive'
 }
 
 function csvEscape(v) {

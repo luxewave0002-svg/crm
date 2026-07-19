@@ -62,7 +62,7 @@ export function calcTestEndDate(startDateStr, periodValue) {
 // テスト期間の入力欄を出すかどうかの判定
 // オンライン: LUXE WAVEの_testプラン、またはブレーカー(常に)
 // 小売: ネックレス・スマートプラグ
-export const RETAIL_TEST_PRODUCTS = ['ネックレス', 'スマートプラグ']
+export const RETAIL_TEST_PRODUCTS = ['スマートプラグ']
 export function onlineNeedsTestPeriod(serviceName, plan) {
   if (serviceName === 'ブレーカー') return true
   if (serviceName === 'LUXE WAVE' && isTestPlan(plan)) return true
@@ -70,4 +70,19 @@ export function onlineNeedsTestPeriod(serviceName, plan) {
 }
 export function retailNeedsTestPeriod(productName) {
   return RETAIL_TEST_PRODUCTS.includes(productName)
+}
+
+// 顧客の状態(稼働中/停止/保留/未入金/テスト期間)
+export const CUSTOMER_STATUSES = [
+  { value: 'active', label: '稼働中', cls: 'cust-active' },
+  { value: 'inactive', label: '停止', cls: 'cust-inactive' },
+  { value: 'pending', label: '保留', cls: 'cust-pending' },
+  { value: 'unpaid', label: '未入金', cls: 'cust-unpaid' },
+  { value: 'testing', label: 'テスト期間', cls: 'cust-testing' },
+]
+export function custStatusLabel(v) {
+  return CUSTOMER_STATUSES.find((s) => s.value === v)?.label || v
+}
+export function custStatusClass(v) {
+  return CUSTOMER_STATUSES.find((s) => s.value === v)?.cls || 'cust-inactive'
 }

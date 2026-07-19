@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { supabase, MAX_LOCATIONS, MAX_PHOTOS, PHOTO_BUCKET, CHANNELS, LUXE_WAVE_PLANS, TEST_PERIODS, calcTestEndDate, onlineNeedsTestPeriod, retailNeedsTestPeriod } from '../supabaseClient'
+import { supabase, MAX_LOCATIONS, MAX_PHOTOS, PHOTO_BUCKET, CHANNELS, LUXE_WAVE_PLANS, TEST_PERIODS, calcTestEndDate, onlineNeedsTestPeriod, retailNeedsTestPeriod, CUSTOMER_STATUSES } from '../supabaseClient'
 import { navigate } from '../App.jsx'
 
 const emptyLoc = () => ({ label: '', address: '', note: '' })
@@ -295,30 +295,25 @@ export default function CustomerEdit({ id, showFlash }) {
             <label>住所</label>
             <input type="text" value={form.address} onChange={(e) => setField('address', e.target.value)} />
           </div>
-          <div className="grid2">
+          {id ? (
+            <div className="grid2">
+              <div className="field">
+                <label>開始日時</label>
+                <input type="datetime-local" value={form.start_datetime} onChange={(e) => setField('start_datetime', e.target.value)} />
+              </div>
+              <div className="field">
+                <label>状態</label>
+                <select value={form.status} onChange={(e) => setField('status', e.target.value)}>
+                  {CUSTOMER_STATUSES.map((s) => <option key={s.value} value={s.value}>{s.label}</option>)}
+                </select>
+              </div>
+            </div>
+          ) : (
             <div className="field">
               <label>開始日時</label>
               <input type="datetime-local" value={form.start_datetime} onChange={(e) => setField('start_datetime', e.target.value)} />
             </div>
-            <div className="field">
-              <label>状態</label>
-              <select
-                value={form.status}
-                onChange={(e) => setField('status', e.target.value)}
-                disabled={!id && !chanEnable.online && !chanEnable.offline}
-              >
-                <option value="active">稼働中</option>
-                <option value="inactive">停止</option>
-                <option value="pending">保留</option>
-                <option value="unpaid">未入金</option>
-              </select>
-              {!id && !chanEnable.online && !chanEnable.offline && (
-                <p className="small muted" style={{ marginTop: 4 }}>
-                  下の「オンラインサービス」または「オフラインサービス」にチェックを入れると選択できます(小売のみの場合は対象外です)。
-                </p>
-              )}
-            </div>
-          </div>
+          )}
         </div>
 
         {id && (

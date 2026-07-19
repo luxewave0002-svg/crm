@@ -91,6 +91,7 @@ tr:hover td{background:var(--panel2)}
 .badge.cust-inactive{background:rgba(154,162,177,.15);color:var(--muted)}
 .badge.cust-pending{background:rgba(255,204,102,.15);color:var(--warn)}
 .badge.cust-unpaid{background:rgba(255,107,107,.15);color:var(--danger)}
+.badge.cust-testing{background:rgba(58,209,181,.15);color:var(--accent2)}
 
 /* チャネル配色: 1.オンライン=青 / 2.小売=緑 / 3.オフライン=橙 */
 .badge.ch-online{background:rgba(91,140,255,.15);color:var(--accent)}

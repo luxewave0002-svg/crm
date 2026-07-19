@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react'
-import { supabase, PHOTO_BUCKET } from '../supabaseClient'
+import { supabase, PHOTO_BUCKET, custStatusLabel, custStatusClass } from '../supabaseClient'
 import { navigate } from '../App.jsx'
 import ChannelEntry from './ChannelEntry.jsx'
 import ServiceTimeline from './ServiceTimeline.jsx'
@@ -23,19 +23,6 @@ function judgeStatus(expected, paid) {
   if (paid <= 0) return 'unpaid'
   if (expected > 0 && paid >= expected) return 'paid'
   return 'partial'
-}
-function custStatusLabel(s) {
-  if (s === 'active') return '稼働中'
-  if (s === 'inactive') return '停止'
-  if (s === 'pending') return '保留'
-  if (s === 'unpaid') return '未入金'
-  return s
-}
-function custStatusClass(s) {
-  if (s === 'active') return 'cust-active'
-  if (s === 'unpaid') return 'cust-unpaid'
-  if (s === 'pending') return 'cust-pending'
-  return 'cust-inactive'
 }
 
 export default function CustomerView({ id, showFlash }) {
