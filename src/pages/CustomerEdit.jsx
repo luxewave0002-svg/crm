@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { supabase, MAX_LOCATIONS, MAX_PHOTOS, PHOTO_BUCKET, CHANNELS, LUXE_WAVE_PLANS, TEST_PERIODS, calcTestEndDate, onlineNeedsTestPeriod, retailNeedsTestPeriod, CUSTOMER_STATUSES } from '../supabaseClient'
+import { supabase, MAX_LOCATIONS, MAX_PHOTOS, PHOTO_BUCKET, CHANNELS, LUXE_WAVE_PLANS, TEST_PERIODS, calcTestEndDate, onlineNeedsTestPeriod, retailNeedsTestPeriod, NECKLACE_LEVELS, retailNeedsLevel, CUSTOMER_STATUSES } from '../supabaseClient'
 import { navigate } from '../App.jsx'
 
 const emptyLoc = () => ({ label: '', address: '', note: '' })
@@ -7,7 +7,7 @@ const today = () => new Date().toISOString().slice(0, 10)
 
 const emptyRow = (ch) => {
   if (ch === 'online') return { service_name: CHANNELS.online.options[0], plan: '', test_period: TEST_PERIODS[0].value, purchase_date: today(), note: '' }
-  if (ch === 'retail') return { product_name: CHANNELS.retail.options[0], quantity: 1, test_period: TEST_PERIODS[0].value, purchase_date: today(), note: '' }
+  if (ch === 'retail') return { product_name: CHANNELS.retail.options[0], quantity: 1, level: NECKLACE_LEVELS[0], test_period: TEST_PERIODS[0].value, purchase_date: today(), note: '' }
   return { visit_type: CHANNELS.offline.options[0], visit_date: today(), notes: '' }
 }
 
@@ -183,10 +183,12 @@ export default function CustomerEdit({ id, showFlash }) {
             }
           } else if (ch === 'retail') {
             const testing = retailNeedsTestPeriod(f.product_name)
+            const needsLevel = retailNeedsLevel(f.product_name)
             return {
               customer_id: custId,
               product_name: f.product_name,
               quantity: Math.max(1, Number(f.quantity) || 1),
+              level: needsLevel ? f.level : null,
               purchase_date: f.purchase_date || today(),
               note: f.note.trim() || null,
               test_period: testing ? f.test_period : null,
@@ -462,6 +464,15 @@ export default function CustomerEdit({ id, showFlash }) {
                         <input disabled={!chanEnable.retail} type="date" value={f.purchase_date} onChange={(e) => setChanRowField('retail', idx, 'purchase_date', e.target.value)} />
                       </div>
                     </div>
+
+                    {retailNeedsLevel(f.product_name) && (
+                      <div className="field">
+                        <label>Level</label>
+                        <select disabled={!chanEnable.retail} value={f.level} onChange={(e) => setChanRowField('retail', idx, 'level', e.target.value)}>
+                          {NECKLACE_LEVELS.map((o) => <option key={o} value={o}>{o}</option>)}
+                        </select>
+                      </div>
+                    )}
 
                     {retailNeedsTestPeriod(f.product_name) && (
                       <div className="grid2">

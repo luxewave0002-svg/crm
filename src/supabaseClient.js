@@ -73,6 +73,12 @@ export function retailNeedsTestPeriod(productName) {
   return RETAIL_TEST_PRODUCTS.includes(productName)
 }
 
+// ネックレス選択時のLevel選択肢
+export const NECKLACE_LEVELS = ['Level.1', 'Level.2', 'Level.3', 'Level.4', 'Level.5']
+export function retailNeedsLevel(productName) {
+  return productName === 'ネックレス'
+}
+
 // 顧客の状態(稼働中/停止/保留/未入金/テスト期間)
 export const CUSTOMER_STATUSES = [
   { value: 'active', label: '稼働中', cls: 'cust-active' },

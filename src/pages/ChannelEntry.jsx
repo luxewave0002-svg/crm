@@ -1,11 +1,11 @@
 import React, { useState } from 'react'
-import { supabase, CHANNELS, LUXE_WAVE_PLANS, TEST_PERIODS, calcTestEndDate, onlineNeedsTestPeriod, retailNeedsTestPeriod } from '../supabaseClient'
+import { supabase, CHANNELS, LUXE_WAVE_PLANS, TEST_PERIODS, calcTestEndDate, onlineNeedsTestPeriod, retailNeedsTestPeriod, NECKLACE_LEVELS, retailNeedsLevel } from '../supabaseClient'
 
 const today = () => new Date().toISOString().slice(0, 10)
 
 const emptyForms = () => ({
   online: { service_name: CHANNELS.online.options[0], plan: '', test_period: TEST_PERIODS[0].value, purchase_date: today(), note: '' },
-  retail: { product_name: CHANNELS.retail.options[0], quantity: 1, test_period: TEST_PERIODS[0].value, purchase_date: today(), note: '' },
+  retail: { product_name: CHANNELS.retail.options[0], quantity: 1, level: NECKLACE_LEVELS[0], test_period: TEST_PERIODS[0].value, purchase_date: today(), note: '' },
   offline: { visit_type: CHANNELS.offline.options[0], visit_date: today(), notes: '' },
 })
 
@@ -38,10 +38,12 @@ export default function ChannelEntry({ customerId, onSaved, showFlash }) {
       }
     } else if (tab === 'retail') {
       const testing = retailNeedsTestPeriod(f.product_name)
+      const needsLevel = retailNeedsLevel(f.product_name)
       payload = {
         customer_id: customerId,
         product_name: f.product_name,
         quantity: Math.max(1, Number(f.quantity) || 1),
+        level: needsLevel ? f.level : null,
         purchase_date: f.purchase_date || today(),
         note: f.note.trim() || null,
         test_period: testing ? f.test_period : null,
@@ -190,6 +192,18 @@ export default function ChannelEntry({ customerId, onSaved, showFlash }) {
                 />
               </div>
             </div>
+
+            {retailNeedsLevel(forms.retail.product_name) && (
+              <div className="field">
+                <label>Level</label>
+                <select
+                  value={forms.retail.level}
+                  onChange={(e) => setField('retail', 'level', e.target.value)}
+                >
+                  {NECKLACE_LEVELS.map((o) => <option key={o} value={o}>{o}</option>)}
+                </select>
+              </div>
+            )}
 
             {retailNeedsTestPeriod(forms.retail.product_name) && (
               <div className="grid2">

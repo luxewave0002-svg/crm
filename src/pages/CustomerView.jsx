@@ -102,7 +102,7 @@ export default function CustomerView({ id, showFlash }) {
       ...(re.data || []).map((r) => ({
         channel: 'retail', id: r.id, date: r.purchase_date,
         title: r.product_name,
-        sub: [r.quantity > 1 ? `×${r.quantity}` : null, r.test_end_date ? `テスト終了予定 ${r.test_end_date}` : null].filter(Boolean).join(' / '),
+        sub: [r.level, r.quantity > 1 ? `×${r.quantity}` : null, r.test_end_date ? `テスト終了予定 ${r.test_end_date}` : null].filter(Boolean).join(' / '),
         note: r.note || '',
         expired: !!(r.test_end_date && r.test_end_date < today()),
         created_at: r.created_at,
