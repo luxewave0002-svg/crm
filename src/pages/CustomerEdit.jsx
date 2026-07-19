@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { supabase, MAX_LOCATIONS, MAX_PHOTOS, PHOTO_BUCKET, CHANNELS, LUXE_WAVE_PLANS, TEST_PERIODS, calcTestEndDate, onlineNeedsTestPeriod, retailNeedsTestPeriod, NECKLACE_LEVELS, retailNeedsLevel, CUSTOMER_STATUSES } from '../supabaseClient'
+import { supabase, MAX_LOCATIONS, MAX_PHOTOS, PHOTO_BUCKET, CHANNELS, LUXE_WAVE_PLANS, TEST_PERIODS, calcTestEndDate, onlineNeedsTestPeriod, retailNeedsTestPeriod, NECKLACE_LEVELS, retailNeedsLevel, offlineNeedsPrice, CUSTOMER_STATUSES } from '../supabaseClient'
 import { navigate } from '../App.jsx'
 
 const emptyLoc = () => ({ label: '', address: '', note: '' })
@@ -8,7 +8,7 @@ const today = () => new Date().toISOString().slice(0, 10)
 const emptyRow = (ch) => {
   if (ch === 'online') return { service_name: CHANNELS.online.options[0], plan: '', test_period: TEST_PERIODS[0].value, purchase_date: today(), note: '' }
   if (ch === 'retail') return { product_name: CHANNELS.retail.options[0], quantity: 1, level: NECKLACE_LEVELS[0], test_period: TEST_PERIODS[0].value, purchase_date: today(), note: '' }
-  return { visit_type: CHANNELS.offline.options[0], visit_date: today(), notes: '' }
+  return { visit_type: CHANNELS.offline.options[0], price: '', visit_date: today(), notes: '' }
 }
 
 export default function CustomerEdit({ id, showFlash }) {
@@ -199,6 +199,7 @@ export default function CustomerEdit({ id, showFlash }) {
             customer_id: custId,
             visit_type: f.visit_type,
             visit_date: f.visit_date || today(),
+            price: offlineNeedsPrice(f.visit_type) && f.price !== '' ? Number(f.price) : null,
             notes: f.notes.trim() || null,
           }
         })
@@ -527,6 +528,14 @@ export default function CustomerEdit({ id, showFlash }) {
                         <input disabled={!chanEnable.offline} type="date" value={f.visit_date} onChange={(e) => setChanRowField('offline', idx, 'visit_date', e.target.value)} />
                       </div>
                     </div>
+
+                    {offlineNeedsPrice(f.visit_type) && (
+                      <div className="field">
+                        <label>価格(円)</label>
+                        <input disabled={!chanEnable.offline} type="number" min="0" value={f.price} onChange={(e) => setChanRowField('offline', idx, 'price', e.target.value)} placeholder="例: 15,000" />
+                      </div>
+                    )}
+
                     <div className="field">
                       <label>スタッフメモ</label>
                       <textarea disabled={!chanEnable.offline} rows={3} value={f.notes} onChange={(e) => setChanRowField('offline', idx, 'notes', e.target.value)} placeholder="例: 3回目施術、肌良好" />

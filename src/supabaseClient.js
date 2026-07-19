@@ -79,6 +79,11 @@ export function retailNeedsLevel(productName) {
   return productName === 'ネックレス'
 }
 
+// オフラインサービスで価格入力欄を出す対象
+export function offlineNeedsPrice(visitType) {
+  return visitType === '光治療'
+}
+
 // 顧客の状態(稼働中/停止/保留/未入金/テスト期間)
 export const CUSTOMER_STATUSES = [
   { value: 'active', label: '稼働中', cls: 'cust-active' },

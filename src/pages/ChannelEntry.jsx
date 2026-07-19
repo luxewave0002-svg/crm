@@ -1,12 +1,12 @@
 import React, { useState } from 'react'
-import { supabase, CHANNELS, LUXE_WAVE_PLANS, TEST_PERIODS, calcTestEndDate, onlineNeedsTestPeriod, retailNeedsTestPeriod, NECKLACE_LEVELS, retailNeedsLevel } from '../supabaseClient'
+import { supabase, CHANNELS, LUXE_WAVE_PLANS, TEST_PERIODS, calcTestEndDate, onlineNeedsTestPeriod, retailNeedsTestPeriod, NECKLACE_LEVELS, retailNeedsLevel, offlineNeedsPrice } from '../supabaseClient'
 
 const today = () => new Date().toISOString().slice(0, 10)
 
 const emptyForms = () => ({
   online: { service_name: CHANNELS.online.options[0], plan: '', test_period: TEST_PERIODS[0].value, purchase_date: today(), note: '' },
   retail: { product_name: CHANNELS.retail.options[0], quantity: 1, level: NECKLACE_LEVELS[0], test_period: TEST_PERIODS[0].value, purchase_date: today(), note: '' },
-  offline: { visit_type: CHANNELS.offline.options[0], visit_date: today(), notes: '' },
+  offline: { visit_type: CHANNELS.offline.options[0], price: '', visit_date: today(), notes: '' },
 })
 
 export default function ChannelEntry({ customerId, onSaved, showFlash }) {
@@ -54,6 +54,7 @@ export default function ChannelEntry({ customerId, onSaved, showFlash }) {
         customer_id: customerId,
         visit_type: f.visit_type,
         visit_date: f.visit_date || today(),
+        price: offlineNeedsPrice(f.visit_type) && f.price !== '' ? Number(f.price) : null,
         notes: f.notes.trim() || null,
       }
     }
@@ -255,6 +256,20 @@ export default function ChannelEntry({ customerId, onSaved, showFlash }) {
                 />
               </div>
             </div>
+
+            {offlineNeedsPrice(forms.offline.visit_type) && (
+              <div className="field">
+                <label>価格(円)</label>
+                <input
+                  type="number"
+                  min="0"
+                  value={forms.offline.price}
+                  onChange={(e) => setField('offline', 'price', e.target.value)}
+                  placeholder="例: 15,000"
+                />
+              </div>
+            )}
+
             <div className="field">
               <label>スタッフメモ</label>
               <textarea

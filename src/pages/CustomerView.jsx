@@ -109,7 +109,9 @@ export default function CustomerView({ id, showFlash }) {
       })),
       ...(off.data || []).map((r) => ({
         channel: 'offline', id: r.id, date: r.visit_date,
-        title: r.visit_type, sub: '', note: r.notes || '',
+        title: r.visit_type,
+        sub: r.price ? `¥${Number(r.price).toLocaleString()}` : '',
+        note: r.notes || '',
         created_at: r.created_at,
       })),
     ]
