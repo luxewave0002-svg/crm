@@ -16,14 +16,14 @@ export const CHANNELS = {
     label: 'オンラインサービス',
     short: 'オンライン',
     table: 'crm_service_online',
-    options: ['LUXE WAVE', 'ブレーカー'],
+    options: ['LUXE WAVE', 'ブレーカー', 'スマートプラグ'],
   },
   retail: {
     key: 'retail',
     label: '小売商品',
     short: '小売',
     table: 'crm_service_retail',
-    options: ['ruNe', 'ネックレス', 'スマートプラグ'],
+    options: ['ruNe', 'ネックレス'],
   },
   offline: {
     key: 'offline',
@@ -60,11 +60,12 @@ export function calcTestEndDate(startDateStr, periodValue) {
 }
 
 // テスト期間の入力欄を出すかどうかの判定
-// オンライン: LUXE WAVEの_testプラン、またはブレーカー(常に)
-// 小売: ネックレス・スマートプラグ
-export const RETAIL_TEST_PRODUCTS = ['スマートプラグ']
+// オンライン: LUXE WAVEの_testプラン、ブレーカー・スマートプラグ(常に)
+// 小売: 現在は対象なし
+export const ONLINE_TEST_SERVICES = ['ブレーカー', 'スマートプラグ']
+export const RETAIL_TEST_PRODUCTS = []
 export function onlineNeedsTestPeriod(serviceName, plan) {
-  if (serviceName === 'ブレーカー') return true
+  if (ONLINE_TEST_SERVICES.includes(serviceName)) return true
   if (serviceName === 'LUXE WAVE' && isTestPlan(plan)) return true
   return false
 }
