@@ -375,7 +375,7 @@ export default function CustomerEdit({ id, showFlash }) {
                             {LUXE_WAVE_PLANS.map((o) => <option key={o} value={o}>{o}</option>)}
                           </select>
                         ) : (
-                          <input disabled={!chanEnable.online} type="text" value={f.plan} onChange={(e) => setChanRowField('online', idx, 'plan', e.target.value)} placeholder="例: 3ヶ月プラン" />
+                          <input disabled={!chanEnable.online} type="text" value={f.plan} onChange={(e) => setChanRowField('online', idx, 'plan', e.target.value)} placeholder="例: 15,000円" />
                         )}
                       </div>
                     </div>

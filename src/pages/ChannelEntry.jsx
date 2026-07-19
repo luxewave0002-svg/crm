@@ -115,7 +115,7 @@ export default function ChannelEntry({ customerId, onSaved, showFlash }) {
                     type="text"
                     value={forms.online.plan}
                     onChange={(e) => setField('online', 'plan', e.target.value)}
-                    placeholder="例: 3ヶ月プラン"
+                    placeholder="例: 15,000円"
                   />
                 )}
               </div>
