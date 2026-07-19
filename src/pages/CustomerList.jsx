@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { supabase, custStatusLabel, custStatusClass } from '../supabaseClient'
+import { supabase, custStatusLabel, custStatusClass, downloadCsv } from '../supabaseClient'
 import { navigate } from '../App.jsx'
 
 function yen(n) {
@@ -9,12 +9,6 @@ function statusLabel(s) {
   if (s === 'paid') return '入金済み'
   if (s === 'partial') return '一部入金'
   return '未入金'
-}
-
-function csvEscape(v) {
-  const s = String(v ?? '')
-  if (/[",\n]/.test(s)) return '"' + s.replace(/"/g, '""') + '"'
-  return s
 }
 
 function exportCsv(customers, payMap, thisYm) {
@@ -34,18 +28,8 @@ function exportCsv(customers, payMap, thisYm) {
       c.memo,
     ]
   })
-  const lines = [headers, ...rows].map((r) => r.map(csvEscape).join(',')).join('\r\n')
-  const bom = '\uFEFF' // Excelでの文字化け防止
-  const blob = new Blob([bom + lines], { type: 'text/csv;charset=utf-8;' })
-  const url = URL.createObjectURL(blob)
-  const a = document.createElement('a')
   const today = new Date().toISOString().slice(0, 10)
-  a.href = url
-  a.download = `顧客一覧_${today}.csv`
-  document.body.appendChild(a)
-  a.click()
-  document.body.removeChild(a)
-  URL.revokeObjectURL(url)
+  downloadCsv(`顧客一覧_${today}.csv`, [headers, ...rows])
 }
 
 export default function CustomerList({ showFlash, flash }) {

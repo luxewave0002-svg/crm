@@ -9,6 +9,26 @@ export const MAX_LOCATIONS = 10
 export const MAX_PHOTOS = 10
 export const PHOTO_BUCKET = 'crm-photos'
 
+// CSV出力共通ヘルパー
+export function csvEscape(v) {
+  const s = String(v ?? '')
+  if (/[",\n]/.test(s)) return '"' + s.replace(/"/g, '""') + '"'
+  return s
+}
+export function downloadCsv(filename, rows) {
+  const lines = rows.map((r) => r.map(csvEscape).join(',')).join('\r\n')
+  const bom = '\uFEFF' // Excelでの文字化け防止
+  const blob = new Blob([bom + lines], { type: 'text/csv;charset=utf-8;' })
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = filename
+  document.body.appendChild(a)
+  a.click()
+  document.body.removeChild(a)
+  URL.revokeObjectURL(url)
+}
+
 // 3チャネル定義 (1.オンライン=青 / 2.小売=緑 / 3.オフライン=橙)
 export const CHANNELS = {
   online: {

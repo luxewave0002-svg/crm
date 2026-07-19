@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react'
-import { supabase, PHOTO_BUCKET, custStatusLabel, custStatusClass } from '../supabaseClient'
+import { supabase, PHOTO_BUCKET, custStatusLabel, custStatusClass, downloadCsv } from '../supabaseClient'
 import { navigate } from '../App.jsx'
 import ChannelEntry from './ChannelEntry.jsx'
 import ServiceTimeline from './ServiceTimeline.jsx'
@@ -23,6 +23,54 @@ function judgeStatus(expected, paid) {
   if (paid <= 0) return 'unpaid'
   if (expected > 0 && paid >= expected) return 'paid'
   return 'partial'
+}
+const CH_LABEL = { online: 'オンライン', retail: '小売', offline: 'オフライン' }
+
+function exportCustomerCsv(customer, locs, contracts, payDraft, year, events) {
+  const rows = []
+
+  rows.push(['顧客情報'])
+  rows.push(['氏名', 'フリガナ', '電話番号', 'メールアドレス', '郵便番号', '住所', '開始日時', '状態', 'メモ'])
+  rows.push([
+    customer.name, customer.kana, customer.phone, customer.email,
+    customer.postal_code, customer.address,
+    customer.start_datetime ? customer.start_datetime.replace('T', ' ') : '',
+    custStatusLabel(customer.status), customer.memo,
+  ])
+  rows.push([])
+
+  rows.push(['サービス提供場所'])
+  rows.push(['#', '場所名', '住所', '備考'])
+  if (!locs.length) rows.push(['—', '', '', ''])
+  locs.forEach((l, i) => rows.push([i + 1, l.label, l.address, l.note]))
+  rows.push([])
+
+  rows.push(['契約プラン・価格・割引'])
+  rows.push(['プラン名', '開始日', '終了日', '価格', '割引', '割引種別', '月額', '備考'])
+  if (!contracts.length) rows.push(['—', '', '', '', '', '', '', ''])
+  contracts.forEach((c) => rows.push([
+    c.plan_name, c.start_date || '', c.end_date || '',
+    c.price, c.discount, c.discount_type === 'percent' ? '%引き' : '円引き',
+    c.monthly_fee, c.note,
+  ]))
+  rows.push([])
+
+  rows.push([`入金管理(${year}年)`])
+  rows.push(['月', '予定額', '入金額', '入金日', '状態', 'メモ'])
+  for (let m = 1; m <= 12; m++) {
+    const ym = `${year}-${String(m).padStart(2, '0')}`
+    const d = payDraft[ym] || {}
+    rows.push([`${m}月`, d.expected_amount ?? 0, d.paid_amount ?? 0, d.paid_date || '', statusLabel(d.status), d.note || ''])
+  }
+  rows.push([])
+
+  rows.push(['サービス履歴(オンライン・小売・オフライン)'])
+  rows.push(['日付', 'チャネル', '項目', '詳細', '備考'])
+  if (!events.length) rows.push(['—', '', '', '', ''])
+  events.forEach((ev) => rows.push([ev.date, CH_LABEL[ev.channel] || ev.channel, ev.title, ev.sub, ev.note]))
+
+  const fname = `顧客_${customer.name}_${today()}.csv`
+  downloadCsv(fname, rows)
 }
 
 export default function CustomerView({ id, showFlash }) {
@@ -197,6 +245,7 @@ export default function CustomerView({ id, showFlash }) {
           </p>
         </div>
         <div className="actions">
+          <button className="btn" onClick={() => exportCustomerCsv(customer, locs, contracts, payDraft, year, events)}>CSVエクスポート</button>
           <a className="btn" onClick={() => navigate(`/customer/edit?id=${id}`)}>編集</a>
           <button className="btn danger" onClick={onDeleteCustomer}>削除</button>
         </div>
